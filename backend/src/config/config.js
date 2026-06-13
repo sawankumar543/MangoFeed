@@ -1,0 +1,12 @@
+import 'dotenv/config'; // Sabse upar hona chahiye
+
+
+if(!process.env.PORT) {
+    console.log("Config file me hi PORT nhi aarh ahi")
+}
+const config = {
+    PORT: process.env.PORT,
+    NODE_ENV: process.env.NODE_ENV,
+}
+
+export default config
