@@ -2,6 +2,9 @@ import 'dotenv/config'; // Sabse upar hona chahiye
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dns from 'node:dns/promises';
+// configure custom DNS server globally for resolve operations
+dns.setServers(['1.1.1.1', '8.8.8.8'])
 
 // Make application
 const app = express()
