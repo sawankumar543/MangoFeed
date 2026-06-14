@@ -65,8 +65,39 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check kar rha hun ki
+        // 1. Validation: Check karein ki email aur password aaya hai ki nhi
+        if(!email || !password) {
+            return res.status(400).json({ message: "Please add email and password!"})
+        }
+
+        // 2. User ko email se dhundhna
+        const user = await User.findOne({ email });
+        
+         // JWT Token generate karein (user id se)
+        const token = jwt.sign({id: user._id.toString() }, config.JWT_SECRET, {
+            expiresIn:'7d'
+        })
+        // 3. Agr user mil gya aur password match ho gya
+        if(user && (await bcrypt.compare(password, user.password))) {
+            return res.status(200).cookie('jwt_token', token, {
+                httpOnly: true,
+                secure: config.NODE_ENV?.trim().toLowerCase() === 'production',
+                sameSite: 'strict',
+                maxAge: 7*24*60*60*1000,
+            }).json({
+                success: true,
+                message: 'Login successful! Welcome back 😀',
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email, 
+                },
+            })
+        } else {
+             // Security reason ke liye hum exact nahi batate ki password galat hai ya email
+            return res.status(401).json({ message: 'Invalid email and password'})
+        }
     } catch(error) {
-        console.log(error.message);
+        return res.status(500).json({ message: error.message});
     }
 }
