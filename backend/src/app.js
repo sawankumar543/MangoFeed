@@ -3,7 +3,11 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dns from 'node:dns/promises';
-import router from './routes/auth.routes.js';
+import authRouter from './routes/auth.routes.js';
+import userRouter from './routes/user.routes.js';
+import cookieParser from 'cookie-parser';
+
+
 // configure custom DNS server globally for resolve operations
 dns.setServers(['1.1.1.1', '8.8.8.8'])
 
@@ -11,6 +15,7 @@ dns.setServers(['1.1.1.1', '8.8.8.8'])
 const app = express()
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true}))
 app.use((err, req, res, next) => {
   if(err instanceof SyntaxError && err.status === 400 && 'body' in err) {
@@ -20,8 +25,11 @@ app.use((err, req, res, next) => {
   }
 })
 
-// api
-app.use('/auth', router)
+// api auth
+app.use('/auth', authRouter)
+
+// user profile
+app.use('/user', userRouter)
 
 // Print current mode
 console.log("Current NODE_ENV is:", process.env.NODE_ENV);

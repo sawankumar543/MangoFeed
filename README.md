@@ -25,7 +25,7 @@ Frontend:
 Backend:
 - Node.js
 - Express
-- TypeScript
+- JavaScript
 
 Database:
 - MongoDB
