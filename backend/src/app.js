@@ -6,6 +6,7 @@ import dns from 'node:dns/promises';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 
 // configure custom DNS server globally for resolve operations
@@ -16,6 +17,12 @@ const app = express()
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true}))
 app.use((err, req, res, next) => {
   if(err instanceof SyntaxError && err.status === 400 && 'body' in err) {
